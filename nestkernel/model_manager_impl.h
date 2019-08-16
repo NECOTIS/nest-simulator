@@ -83,14 +83,16 @@ template < typename ConnectionT, template < typename > class ConnectorModelT >
 void
 ModelManager::register_connection_model( const std::string& name,
   const bool requires_symmetric,
-  const bool requires_clopath_archiving )
+  const bool requires_clopath_archiving,
+  const bool supports_update)
 {
   ConnectorModel* cf = new ConnectorModelT< ConnectionT >( name,
     /*is_primary=*/true,
     /*has_delay=*/true,
     requires_symmetric,
     /*supports_wfr*/ false,
-    requires_clopath_archiving );
+    requires_clopath_archiving,
+	supports_update);
   register_connection_model_( cf );
 
   if ( not ends_with( name, "_hpc" ) )
@@ -100,7 +102,8 @@ ModelManager::register_connection_model( const std::string& name,
       /*has_delay=*/true,
       requires_symmetric,
       /*supports_wfr=*/false,
-      requires_clopath_archiving );
+      requires_clopath_archiving,
+	  supports_update);
     register_connection_model_( cf );
   }
 }
@@ -109,10 +112,11 @@ template < typename ConnectionT >
 void
 ModelManager::register_connection_model( const std::string& name,
   const bool requires_symmetric,
-  const bool requires_clopath_archiving )
+  const bool requires_clopath_archiving,
+  const bool supports_update)
 {
   register_connection_model< ConnectionT, GenericConnectorModel >(
-    name, requires_symmetric, requires_clopath_archiving );
+    name, requires_symmetric, requires_clopath_archiving, supports_update );
 }
 
 /**
@@ -123,10 +127,11 @@ void
 ModelManager::register_secondary_connection_model( const std::string& name,
   const bool has_delay,
   const bool requires_symmetric,
-  const bool supports_wfr )
+  const bool supports_wfr,
+  const bool supports_update)
 {
   ConnectorModel* cm =
-    new GenericSecondaryConnectorModel< ConnectionT >( name, has_delay, requires_symmetric, supports_wfr );
+    new GenericSecondaryConnectorModel< ConnectionT >( name, has_delay, requires_symmetric, supports_wfr, supports_update );
 
   synindex syn_id = register_connection_model_( cm );
 
@@ -144,7 +149,7 @@ ModelManager::register_secondary_connection_model( const std::string& name,
 
   // create labeled secondary event connection model
   cm = new GenericSecondaryConnectorModel< ConnectionLabel< ConnectionT > >(
-    name + "_lbl", has_delay, requires_symmetric, supports_wfr );
+    name + "_lbl", has_delay, requires_symmetric, supports_wfr, supports_update );
 
   syn_id = register_connection_model_( cm );
 

@@ -235,6 +235,9 @@ public:
   }
 
 private:
+
+  void init_state_( const Connection< targetidentifierT > & conn );
+
   double x_;           //!< amount of resources in recovered state
   double y_;           //!< amount of resources in active state
   double u_;           //!< actual probability of release
@@ -349,6 +352,18 @@ TsodyksConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
   ConnectionBase::set_status( d, cm );
 
   updateValue< double >( d, names::u, u_ );
+}
+
+template < typename targetidentifierT >
+void
+TsodyksConnectionHom< targetidentifierT >::init_state_(const Connection< targetidentifierT > & conn)
+{
+	TsodyksConnectionHom< targetidentifierT > const& pr = dynamic_cast< TsodyksConnectionHom< targetidentifierT > const& >( conn );
+
+  x_ = pr.x_;
+  y_ = pr.y_;
+  u_ = pr.u_;
+
 }
 
 } // namespace

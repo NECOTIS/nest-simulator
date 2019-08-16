@@ -29,6 +29,7 @@
 // Includes from nestkernel:
 #include "connection.h"
 
+
 namespace nest
 {
 
@@ -152,7 +153,6 @@ public:
    */
   void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
-
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
   public:
@@ -182,6 +182,9 @@ public:
 
 
 private:
+
+  void init_state_( const Connection< targetidentifierT > & conn );
+
   double weight_;
   double U_;           //!< unit increment of a facilitating synapse
   double u_;           //!< dynamic value of probability of release
@@ -296,6 +299,17 @@ Tsodyks2Connection< targetidentifierT >::set_status( const DictionaryDatum& d, C
   }
 
   updateValue< double >( d, names::x, x_ );
+}
+
+template < typename targetidentifierT >
+void
+Tsodyks2Connection< targetidentifierT >::init_state_(const Connection< targetidentifierT > & conn)
+{
+  Tsodyks2Connection< targetidentifierT > const& pr = dynamic_cast< Tsodyks2Connection< targetidentifierT > const& >( conn );
+
+  u_ = pr.u_;
+  x_ = pr.x_;
+
 }
 
 } // namespace

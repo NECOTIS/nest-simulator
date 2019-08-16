@@ -388,6 +388,20 @@ public:
 
   void set_stdp_eps( const double stdp_eps );
 
+  /**
+   * Reset state of connections.
+   *
+   * Reset the state (but no other properties) of connections. This is
+   * required for ResetNetwork, which affects states but not parameters.
+   */
+  void reset_connections_state();
+
+  void update_connections( const thread tid,
+    Time const& origin,
+  	const long from,
+  	const long to);
+
+
 private:
   size_t get_num_target_data( const thread tid ) const;
 

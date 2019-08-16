@@ -236,6 +236,37 @@ public:
     const double,
     const CommonSynapseProperties& );
 
+  /**
+   * Set state variables to the default values for the model.
+   * Dynamic variables are all observable state variables of a node
+   * that change during Node::update().
+   * After calling init_state(), the state variables
+   * should have the same values that they had after the node was
+   * created. In practice, they will be initialized to the values
+   * of the prototype node (model).
+   * @note If the parameters of the model have been changes since the node
+   *       was created, the node will be initialized to the present values
+   *       set in the model.
+   * @note This function is the public interface to the private function
+   *       Node::init_state_(const Node&) that must be implemented by
+   *       derived classes.
+   */
+   void init_state();
+
+  /**
+   * Bring the node from state $t$ to $t+n*dt$.
+   *
+   * n->update(T, from, to) performs the update steps beginning
+   * at T+from .. T+to-1, ie, emitting events with time stamps
+   * T+from+1 .. T+to.
+   *
+   * @param Time   network time at beginning of time slice.
+   * @param long initial step inside time slice
+   * @param long post-final step inside time slice
+   *
+   */
+  virtual void update( Time const&, const long, const long, const CommonSynapseProperties& ){};
+
   Node*
   get_target( const thread tid ) const
   {
@@ -294,6 +325,16 @@ public:
   }
 
 protected:
+
+  /**
+   * Auxiliary function to downcast a Connection to a derived class.
+   * @note This function is used to convert generic Connection references to specific
+   *       ones when initializing parameters or state from a prototype.
+   */
+
+  template < template <typename> class ConcreteConnection>
+  const ConcreteConnection< targetidentifierT >& downcast( const Connection< targetidentifierT >& );
+
   /**
    * This function calls check_connection() on the sender to check if the
    * receiver
@@ -305,6 +346,19 @@ protected:
    * maturing connections)
    */
   void check_connection_( Node& dummy_target, Node& source, Node& target, const rport receptor_type );
+
+  /**
+   * Private function to initialize the state of a connection to model defaults.
+   * This function, which must be overloaded by all derived classes, provides
+   * the implementation for initializing the state of a connection to the model
+   * defaults; the state is the set of observable dynamic variables.
+   * @param Reference to model prototype object.
+   * @see Connection::init_state()
+   * @note To provide a reasonable behavior during the transition to the new
+   *       scheme, init_state_() has a default implementation calling
+   *       init_dynamic_state_().
+   */
+  virtual void init_state_(Connection< targetidentifierT > const& ){};
 
   /* the order of the members below is critical
      as it influcences the size of the object. Please leave unchanged
@@ -319,6 +373,15 @@ protected:
   SynIdDelay syn_id_delay_;
 };
 
+template < typename targetidentifierT >
+template < template <typename> class ConcreteConnection>
+const ConcreteConnection< targetidentifierT >&
+Connection< targetidentifierT >::downcast( const Connection< targetidentifierT >& n )
+{
+  ConcreteConnection< targetidentifierT > const* tp = dynamic_cast< ConcreteConnection< targetidentifierT > const* >( &n );
+  assert( tp != 0 );
+  return *tp;
+}
 
 template < typename targetidentifierT >
 inline void
@@ -402,6 +465,17 @@ Connection< targetidentifierT >::trigger_update_weight( const thread,
     "Connection::trigger_update_weight: "
     "Connection does not support updates that are triggered by the volume "
     "transmitter." );
+}
+
+template < typename targetidentifierT >
+inline void
+Connection< targetidentifierT >::init_state()
+{
+  // create a new instance of the default connection
+  // NOTE: derived classes can define a constructor that takes the Connection base class and later use static_cast
+  const Connection< targetidentifierT >& connection = Connection< targetidentifierT >();
+
+  init_state_(connection);
 }
 
 } // namespace nest

@@ -196,6 +196,9 @@ public:
   }
 
 private:
+
+  void init_state_( const Connection< targetidentifierT > & conn );
+
   double weight_;
   double tau_psc_;     //!< [ms] time constant of postsyn current
   double tau_fac_;     //!< [ms] time constant for fascilitation
@@ -360,6 +363,19 @@ TsodyksConnection< targetidentifierT >::set_status( const DictionaryDatum& d, Co
   }
 
   updateValue< double >( d, names::u, u_ );
+}
+
+
+template < typename targetidentifierT >
+void
+TsodyksConnection< targetidentifierT >::init_state_(const Connection< targetidentifierT > & conn)
+{
+  TsodyksConnection< targetidentifierT > const& pr = dynamic_cast< TsodyksConnection< targetidentifierT > const& >( conn );
+
+  x_ = pr.x_;
+  y_ = pr.y_;
+  u_ = pr.u_;
+
 }
 
 } // namespace

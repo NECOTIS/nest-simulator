@@ -207,6 +207,20 @@ public:
    * Remove disabled connections from the connector.
    */
   virtual void remove_disabled_connections( const index first_disabled_index ) = 0;
+
+  /**
+   * Reset the dynamical state of connections.
+   */
+  virtual void reset_connections_state() = 0;
+
+
+  /**
+   * Update the dynamical state of connections.
+   */
+  virtual void update_connections( Time const& origin,
+	const long from,
+	const long to,
+	const std::vector< ConnectorModel* >& cm) = 0;
 };
 
 /**
@@ -492,6 +506,31 @@ public:
     assert( C_[ first_disabled_index ].is_disabled() );
     C_.erase( C_.begin() + first_disabled_index, C_.end() );
   }
+
+  void
+  reset_connections_state()
+   {
+     for ( size_t i = 0; i < C_.size(); ++i )
+     {
+         C_[ i ].init_state();
+     }
+   }
+
+  void
+  update_connections(Time const& origin,
+					 const long from,
+					 const long to,
+					 const std::vector< ConnectorModel* >& cm)
+  {
+	 typename ConnectionT::CommonPropertiesType const& cp =
+	   static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
+
+	 for ( size_t i = 0; i < C_.size(); ++i )
+	 {
+		 C_[ i ].update(origin, from, to, cp);
+	 }
+  }
+
 };
 
 } // of namespace nest

@@ -903,6 +903,21 @@ nest::SimulationManager::update_()
         }
       }
 
+
+      // We update in a parallel region. Therefore, we need to catch
+      // exceptions here and then handle them after the parallel region.
+      try
+      {
+        kernel().connection_manager.update_connections( tid, clock_, from_step_, to_step_ );
+      }
+      catch ( std::exception& e )
+      {
+        // so throw the exception after parallel region
+        exceptions_raised.at( tid ) = lockPTR< WrappedThreadException >( new WrappedThreadException( e ) );
+      }
+
+
+
 // parallel section ends, wait until all threads are done -> synchronize
 #pragma omp barrier
       // gather and deliver only at end of slice, i.e., end of min_delay step
@@ -980,11 +995,7 @@ nest::SimulationManager::reset_network()
 
   kernel().node_manager.reset_nodes_state();
 
-  // ConnectionManager doesn't support resetting dynamic synapses yet
-  LOG( M_WARNING,
-    "SimulationManager::ResetNetwork",
-    "Synapses with internal dynamics (facilitation, STDP) are not reset.\n"
-    "This will be implemented in a future version of NEST." );
+  kernel().connection_manager.reset_connections_state();
 }
 
 void

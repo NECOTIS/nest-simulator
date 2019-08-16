@@ -1570,3 +1570,41 @@ nest::ConnectionManager::check_secondary_connections_exist()
 {
   secondary_connections_exist_ = kernel().mpi_manager.any_true( secondary_connections_exist_ );
 }
+
+void
+nest::ConnectionManager::reset_connections_state()
+{
+#pragma omp parallel
+    {
+      const thread tid = kernel().vp_manager.get_thread_id();
+
+      for ( synindex syn_id = 0; syn_id < connections_[ tid ].size(); ++syn_id )
+	  {
+		if ( connections_[ tid ][ syn_id ] != NULL )
+		{
+		  connections_[ tid ][ syn_id ]->reset_connections_state();
+		}
+	  }
+    }
+}
+
+void
+nest::ConnectionManager::update_connections( const thread tid,
+  Time const& origin,
+  const long from,
+  const long to)
+{
+
+  const std::vector< ConnectorModel* >& cm = kernel().model_manager.get_synapse_prototypes( tid );
+
+  for ( synindex syn_id = 0; syn_id < connections_[ tid ].size(); ++syn_id )
+  {
+	if ( connections_[ tid ][ syn_id ] != NULL)
+	{
+	  if ( cm[ syn_id ]->supports_update() )
+	  {
+	    connections_[ tid ][ syn_id ]->update_connections(origin, from, to, cm);
+	  }
+	}
+  }
+}
