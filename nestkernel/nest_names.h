@@ -106,6 +106,7 @@ extern const Name close_on_reset;
 extern const Name configbit_0;
 extern const Name configbit_1;
 extern const Name connection_count;
+extern const Name connection_update_interval;
 extern const Name consistent_integration;
 extern const Name continuous;
 extern const Name count_covariance;

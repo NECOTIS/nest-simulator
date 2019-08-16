@@ -401,6 +401,9 @@ public:
   	const long from,
   	const long to);
 
+  long get_connection_update_interval() const;
+
+  void set_connection_update_interval(const long interval);
 
 private:
   size_t get_num_target_data( const thread tid ) const;
@@ -614,6 +617,10 @@ private:
   //! Maximum distance between (double) spike times in STDP that is
   //! still considered 0. See issue #894
   double stdp_eps_;
+
+  //! Time interval for connections update
+  long connection_update_interval_;
+
 };
 
 inline DictionaryDatum&
@@ -825,6 +832,18 @@ ConnectionManager::set_has_source_subsequent_targets( const thread tid,
   const bool subsequent_targets )
 {
   connections_[ tid ][ syn_id ]->set_has_source_subsequent_targets( lcid, subsequent_targets );
+}
+
+inline void
+ConnectionManager::set_connection_update_interval(const long interval)
+{
+  connection_update_interval_ = interval;
+}
+
+inline long
+ConnectionManager::get_connection_update_interval() const
+{
+  return connection_update_interval_;
 }
 
 } // namespace nest

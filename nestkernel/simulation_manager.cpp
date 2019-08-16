@@ -903,20 +903,20 @@ nest::SimulationManager::update_()
         }
       }
 
-
-      // We update in a parallel region. Therefore, we need to catch
-      // exceptions here and then handle them after the parallel region.
-      try
+      if ( ( clock_.get_steps() + from_step_ ) % kernel().connection_manager.get_connection_update_interval() == 0 )
       {
-        kernel().connection_manager.update_connections( tid, clock_, from_step_, to_step_ );
+		  // We update in a parallel region. Therefore, we need to catch
+		  // exceptions here and then handle them after the parallel region.
+		  try
+		  {
+			kernel().connection_manager.update_connections( tid, clock_, from_step_, to_step_ );
+		  }
+		  catch ( std::exception& e )
+		  {
+			// so throw the exception after parallel region
+			exceptions_raised.at( tid ) = lockPTR< WrappedThreadException >( new WrappedThreadException( e ) );
+		  }
       }
-      catch ( std::exception& e )
-      {
-        // so throw the exception after parallel region
-        exceptions_raised.at( tid ) = lockPTR< WrappedThreadException >( new WrappedThreadException( e ) );
-      }
-
-
 
 // parallel section ends, wait until all threads are done -> synchronize
 #pragma omp barrier

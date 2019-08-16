@@ -265,7 +265,7 @@ public:
    * @param long post-final step inside time slice
    *
    */
-  virtual void update( Time const&, const long, const long, const CommonSynapseProperties& ){};
+  virtual void update( Time const&, const long, const long, const thread, const CommonSynapseProperties& ){};
 
   Node*
   get_target( const thread tid ) const

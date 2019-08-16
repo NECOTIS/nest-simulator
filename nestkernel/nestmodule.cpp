@@ -1664,6 +1664,31 @@ NestModule::SetStdpEps_dFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
+/**
+ * Set connection update interval
+ */
+void
+NestModule::SetConnectionUpdateInterval_iFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+  long interval = getValue< long >( i->OStack.top() );
+
+  kernel().connection_manager.set_connection_update_interval( interval );
+
+  i->OStack.pop();
+  i->EStack.pop();
+}
+
+/**
+ * Get connection update interval
+ */
+void
+NestModule::GetConnectionUpdateInterval_Function::execute( SLIInterpreter* i ) const
+{
+  i->OStack.push( kernel().connection_manager.get_connection_update_interval() );
+  i->EStack.pop();
+}
+
 void
 NestModule::init( SLIInterpreter* i )
 {
@@ -1751,6 +1776,9 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "Disconnect_g_g_D_D", &disconnect_g_g_D_Dfunction );
 
   i->createcommand( "SetStdpEps", &setstdpeps_dfunction );
+
+  i->createcommand( "SetConnectionUpdateInterval", &setconnectionupdateinterval_ifunction );
+  i->createcommand( "GetConnectionUpdateInterval", &getconnectionupdateinterval_function );
 
   // Add connection rules
   kernel().connection_manager.register_conn_builder< OneToOneBuilder >( "one_to_one" );

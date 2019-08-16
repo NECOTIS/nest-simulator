@@ -85,6 +85,7 @@ const Name close_on_reset( "close_on_reset" );
 const Name configbit_0( "configbit_0" );
 const Name configbit_1( "configbit_1" );
 const Name connection_count( "connection_count" );
+const Name connection_update_interval( "connection_update_interval" );
 const Name consistent_integration( "consistent_integration" );
 const Name continuous( "continuous" );
 const Name count_covariance( "count_covariance" );

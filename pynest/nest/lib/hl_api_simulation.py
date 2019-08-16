@@ -32,6 +32,7 @@ __all__ = [
     'Cleanup',
     'DisableStructuralPlasticity',
     'EnableStructuralPlasticity',
+    'GetConnectionUpdateInterval',
     'GetKernelStatus',
     'GetStructuralPlasticityStatus',
     'Install',
@@ -40,6 +41,7 @@ __all__ = [
     'ResetNetwork',
     'Run',
     'RunManager',
+    'SetConnectionUpdateInterval',
     'SetKernelStatus',
     'SetStructuralPlasticityStatus',
     'Simulate',
@@ -396,3 +398,32 @@ def DisableStructuralPlasticity():
     KEYWORDS:
     """
     sr('DisableStructuralPlasticity')
+
+
+@check_stack
+def SetConnectionUpdateInterval(interval):
+    """ Set the interval at which connections are updated during network simulation
+
+    See Also
+    --------
+    GetConnectionUpdateInterval
+
+    KEYWORDS:
+    """
+    
+    sps(int(interval))
+    sr('SetConnectionUpdateInterval')
+
+@check_stack
+def GetConnectionUpdateInterval():
+    """ Get the interval at which connections are updated during network simulation
+
+    See Also
+    --------
+    SetConnectionUpdateInterval
+
+    KEYWORDS:
+    """
+
+    sr('GetConnectionUpdateInterval')
+    return spp()

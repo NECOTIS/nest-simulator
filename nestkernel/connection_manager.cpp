@@ -75,6 +75,7 @@ nest::ConnectionManager::ConnectionManager()
   , secondary_connections_exist_( false )
   , check_secondary_connections_()
   , stdp_eps_( 1.0e-6 )
+  , connection_update_interval_( 1 )
 {
 }
 
@@ -160,6 +161,11 @@ nest::ConnectionManager::set_status( const DictionaryDatum& d )
   {
     update_delay_extrema_();
   }
+
+  if ( d->known( names::connection_update_interval ) )
+    {
+      updateValue< long >( d, names::connection_update_interval, connection_update_interval_ );
+    }
 }
 
 nest::DelayChecker&
@@ -179,6 +185,7 @@ nest::ConnectionManager::get_status( DictionaryDatum& dict )
   def< long >( dict, names::num_connections, n );
   def< bool >( dict, names::keep_source_table, keep_source_table_ );
   def< bool >( dict, names::sort_connections_by_source, sort_connections_by_source_ );
+  def< long >( dict, names::connection_update_interval, connection_update_interval_ );
 }
 
 DictionaryDatum
@@ -1603,7 +1610,7 @@ nest::ConnectionManager::update_connections( const thread tid,
 	{
 	  if ( cm[ syn_id ]->supports_update() )
 	  {
-	    connections_[ tid ][ syn_id ]->update_connections(origin, from, to, cm);
+	    connections_[ tid ][ syn_id ]->update_connections(origin, from, to, tid, cm);
 	  }
 	}
   }

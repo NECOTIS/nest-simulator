@@ -220,6 +220,7 @@ public:
   virtual void update_connections( Time const& origin,
 	const long from,
 	const long to,
+	const thread tid,
 	const std::vector< ConnectorModel* >& cm) = 0;
 };
 
@@ -520,6 +521,7 @@ public:
   update_connections(Time const& origin,
 					 const long from,
 					 const long to,
+					 const thread tid,
 					 const std::vector< ConnectorModel* >& cm)
   {
 	 typename ConnectionT::CommonPropertiesType const& cp =
@@ -527,7 +529,7 @@ public:
 
 	 for ( size_t i = 0; i < C_.size(); ++i )
 	 {
-		 C_[ i ].update(origin, from, to, cp);
+		 C_[ i ].update(origin, from, to, tid, cp);
 	 }
   }
 

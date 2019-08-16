@@ -442,6 +442,18 @@ public:
     void execute( SLIInterpreter* ) const;
   } setstdpeps_dfunction;
 
+  class SetConnectionUpdateInterval_iFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } setconnectionupdateinterval_ifunction;
+
+  class GetConnectionUpdateInterval_Function : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } getconnectionupdateinterval_function;
+
   //@}
 };
 

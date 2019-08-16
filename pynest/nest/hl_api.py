@@ -62,6 +62,7 @@ __all__ = [
     'EndSubnet',  # deprecated
     'GetChildren',  # deprecated
     'GetConnections',
+    'GetConnectionUpdateInterval',
     'GetDefaults',
     'GetKernelStatus',
     'GetLeaves',  # deprecated
@@ -82,6 +83,7 @@ __all__ = [
     'Run',
     'RunManager',
     'SetAcceptableLatency',
+    'SetConnectionUpdateInterval',
     'SetDefaults',
     'SetKernelStatus',
     'SetMaxBuffered',
